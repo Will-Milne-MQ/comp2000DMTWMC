@@ -12,7 +12,7 @@ public class Client {
     public static void main(String[] args) throws IOException, InterruptedException {
         HttpClient client = HttpClient.newHttpClient();
         HttpRequest request = HttpRequest.newBuilder()
-                .uri(URI.create("http://13.238.167.130/times"))
+                .uri(URI.create("http://13.238.167.130/weather"))
                 .header("Accept", "text/event-stream")
                 .build();
 
