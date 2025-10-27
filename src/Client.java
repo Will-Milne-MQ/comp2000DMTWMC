@@ -6,9 +6,16 @@ import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.time.Duration;
+import java.util.Currency;
 import java.util.List;
+import java.util.Map;
+import java.util.function.Function;
+import java.util.stream.Collector;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import static java.util.stream.Collectors.groupingBy;
 import static java.util.stream.Collectors.toList;
 
 public class Client {
@@ -16,7 +23,7 @@ public class Client {
     public static void main(String[] args) throws IOException, InterruptedException {
         HttpClient client = HttpClient.newHttpClient();
         HttpRequest request = HttpRequest.newBuilder()
-                .uri(URI.create("http://13.238.167.130/weather"))
+                .uri(URI.create("http://13.238.167.130/rockyou"))
                 .header("Accept", "text/event-stream")
                 .build();
 
@@ -24,25 +31,17 @@ public class Client {
                 .thenApply(HttpResponse::body)
                 .thenAccept(inputStream -> {
                     try (BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream, StandardCharsets.UTF_8))) {
-                        //String line;
-                        reader.lines()
-                            .forEach(line -> System.out.println(line));
+                        String line;
+                        Map<Integer, List<String>> lines = reader.lines().limit(10).collect(Collectors.groupingBy(String::length, Collectors.mapping(s -> "#", Collectors.toList())));
+                        // int i = 0;
                         // while ((line = reader.readLine()) != null) {
-                        //     System.out.print("Received: " + line);
-                        //     if(line.contains("rain")){
-                        //         System.out.print(" Rain is at third value for the grid location first value, second value");
-                        //     }
-                        //     else if(line.contains("windx")){
-                        //         System.out.print(" Windx is at third value for the grid location first value, second value");
-                        //     }
-                        //     else if(line.contains("windy")){
-                        //         System.out.print(" Windy is at third value for the grid location first value, second value");
-                        //     }
-                        //     else if(line.contains("temp")){
-                        //         System.out.print(" temp is at third value for the grid location first value, second value");
-                        //     }
-                        //     System.out.println();
+                        //     System.out.println("Recieved: " + line);
+                        //     // System.out.println(i);
+                        //     // i++;
                         // }
+                        for(Integer key: lines.keySet()){
+                            System.out.println(Integer.toString(key) + ": " + lines.get(key).stream().collect(Collectors.joining()));
+                        }
                     } catch (IOException e) {
                         System.err.println("Error reading Server Side Event (SSE) stream: " + e.getMessage());
                     }
