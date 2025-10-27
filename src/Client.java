@@ -32,7 +32,11 @@ public class Client {
                 .thenAccept(inputStream -> {
                     try (BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream, StandardCharsets.UTF_8))) {
                         String line;
+                        String letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
+                        String numbers = "0123456789";
+                        String punctuation = "`~!@#$%^&*()-_=+[{]}|;:',<.>/?']";
                         Map<Integer, List<String>> lines = reader.lines().limit(10).collect(Collectors.groupingBy(String::length, Collectors.mapping(s -> "#", Collectors.toList())));
+                        Map<Boolean, List<char[]>> linesTypes = reader.lines().limit(3).map(s -> s.toCharArray()).dropWhile(c -> (int) c > 128 || (int) c < 0).collect(Collectors.partitioningBy(c -> letters.indexOf(c) > -1));
                         // int i = 0;
                         // while ((line = reader.readLine()) != null) {
                         //     System.out.println("Recieved: " + line);
